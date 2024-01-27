@@ -30,7 +30,14 @@ public class window : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.F))
             {
                 //player.SendMessage("interact");
-                SceneManager.LoadScene(nextSceneName);
+                if (nextSceneName == "end")
+                {
+                    Application.Quit();
+                }
+                else
+                {
+                    SceneManager.LoadScene(nextSceneName);
+                }
             }
         }
     }
