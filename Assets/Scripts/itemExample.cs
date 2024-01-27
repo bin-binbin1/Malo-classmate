@@ -10,13 +10,15 @@ public class itemExample : MonoBehaviour
     {
         if (collision == player)
         {
+
             player.gameObject.SendMessage("setCurrentItem", itemType);
         }
     }
-    public void OnTriggerExit(Collider other)
+    public void OnTriggerExit2D(Collider2D other)
     {
         if (other == player)
         {
+            
             player.gameObject.SendMessage("releaseItem", itemType);
         }
     }

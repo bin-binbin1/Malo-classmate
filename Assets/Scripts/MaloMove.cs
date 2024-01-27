@@ -22,16 +22,16 @@ public class MaloMove : MonoBehaviour
     private Vector3 leftInitialPosition;
     private Vector3 leftInitialScale;
     private Animator animator;
+    private bool isinteract = false;
+    public float interactTime;
     void Start()
     {
         
         rb = GetComponent<Rigidbody2D>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         Transform[] t=itemFather.GetComponentsInChildren<Transform>();
-        Debug.Log(t.Length);
         for(int i=1; i<t.Length; i++)
         {
-            Debug.Log(t[i].name);
             items.Add(t[i]);
         }
         malodata = rb.GetComponentsInChildren<Transform>();
@@ -39,13 +39,16 @@ public class MaloMove : MonoBehaviour
         holddata.GetComponent<Renderer>().enabled = false;
         leftInitialPosition = leftBar.transform.localPosition;
         leftInitialScale = leftBar.transform.localScale;
-        Debug.Log(leftInitialPosition);
         DontDestroyOnLoad(this); animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        angerBar += Time.deltaTime*angerDropPerSecend;
+        angerBar -= Time.deltaTime*angerDropPerSecend;
+        if(angerBar < 0)
+        {
+            angerBar = 0;
+        }
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
         if (moveHorizontal > 0)
@@ -59,7 +62,15 @@ public class MaloMove : MonoBehaviour
 
         animator.SetBool("walking", moveVertical!=0||moveHorizontal!=0);
 
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
+        Vector2 movement;
+        if (isinteract)
+        {
+            movement = Vector2.zero;
+        }
+        else
+        {
+            movement= new Vector2(moveHorizontal, moveVertical);
+        }
         rb.velocity = movement * speed;
         if (Input.GetKeyUp(KeyCode.Q))
         {
@@ -76,6 +87,7 @@ public class MaloMove : MonoBehaviour
                 else
                 {
                     hold.GetComponent<Renderer>().enabled = true;
+                    hold.GetComponent<Collider2D>().enabled = true;
                     //丢弃物品
                     float x = this.transform.position.x;
                     float y = this.transform.position.y;
@@ -86,10 +98,12 @@ public class MaloMove : MonoBehaviour
             }
             else//拿起物品
             {
+                
                 hold = items[currentItems[currentItemIndex]].gameObject;
                 hold.SendMessage("getItem");
-                Debug.Log(hold.name);
+                Debug.Log(currentItemIndex+ hold.name);
                 hold.GetComponent<Renderer>().enabled = false;
+                hold.GetComponent<Collider2D>().enabled = false;
                 //转换到拿起的图片
 
                 Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
@@ -117,7 +131,7 @@ public class MaloMove : MonoBehaviour
         }
         
         float progress = angerBar / 100f;
-        Debug.Log(progress);
+
         leftBar.transform.localScale = new Vector3(leftInitialScale.x, leftInitialScale.y * progress, leftInitialScale.z);
         float deltaY = (1 - progress) * leftInitialScale.y / 2;
         leftBar.transform.localPosition = new Vector3(leftInitialPosition.x, leftInitialPosition.y + deltaY, leftInitialPosition.z);
@@ -132,18 +146,23 @@ public class MaloMove : MonoBehaviour
     public void releaseItem(int itemType)
     {
         currentItems.Remove(itemType);
-        int t=currentItemIndex;
-        currentItemIndex %= currentItems.Count;
-        if(t!=currentItemIndex)
+        
+        if (currentItemIndex > 0)
         {
-            unselectItem(t);
-            selectItem(currentItemIndex);
+            int t = currentItemIndex;
+            currentItemIndex %= currentItems.Count;
+            if (t != currentItemIndex)
+            {
+                unselectItem(t);
+                selectItem(currentItemIndex);
+            }
         }
     }
     public void angerChange(int anger)
     {
+        Debug.Log(anger);
         angerBar += anger;
-        if (angerBar > 100)
+        if (angerBar >= 100f)
         {
             //GameEnd
         }
@@ -162,5 +181,26 @@ public class MaloMove : MonoBehaviour
         newMaterial.color = Color.white;
         tempMaterial = rend.material;
         rend.material = newMaterial;
+    }
+    public void interact()
+    {
+
+        if(!animator.GetBool("walking")&&!animator.GetBool("interact")){
+            animator.SetBool("interact", true);
+        }
+        
+    }
+    public void gotoWindow()
+    {
+        nearWindow= true;
+    }
+    public void leaveWindow()
+    {
+        nearWindow = false;
+    }
+    IEnumerator interacting()
+    {
+        yield return new WaitForSeconds(interactTime);
+        animator.SetBool("interact", false);
     }
 }

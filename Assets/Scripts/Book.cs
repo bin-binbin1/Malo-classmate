@@ -75,6 +75,7 @@ public class Book : MonoBehaviour
     {
         while (true)
         {
+            Debug.Log("angerChange");
             yield return new WaitForSeconds(1.0f);
             player.SendMessage("angerChange", an);
             
