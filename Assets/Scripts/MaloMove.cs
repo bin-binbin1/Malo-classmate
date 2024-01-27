@@ -8,26 +8,44 @@ public class MaloMove : MonoBehaviour
     public float speed;
     private GameObject hold;
     public GameObject itemFather;
-    private Transform[] items;
-    private int currentItemIndex=-1;
+    private List<Transform> items = new List<Transform>();
+    private List<int> currentItems = new List<int>();
+    private int currentItemIndex;
     private Transform[] malodata;
     private GameObject holddata;
+    private Material tempMaterial;
+    public SpriteRenderer leftBar;
+    private float angerBar=0;
+    private bool nearWindow=false;
+    public float angerDropPerSecend;
+    // 初始时记录左侧 SpriteRenderer 的位置和大小
+    private Vector3 leftInitialPosition;
+    private Vector3 leftInitialScale;
+    private Animator animator;
     void Start()
     {
+        
         rb = GetComponent<Rigidbody2D>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        items=itemFather.GetComponentsInChildren<Transform>();
-        foreach (var child in items)
+        Transform[] t=itemFather.GetComponentsInChildren<Transform>();
+        Debug.Log(t.Length);
+        for(int i=1; i<t.Length; i++)
         {
-            Debug.Log(child.name);
+            Debug.Log(t[i].name);
+            items.Add(t[i]);
         }
         malodata = rb.GetComponentsInChildren<Transform>();
         holddata = malodata[1].gameObject;
         holddata.GetComponent<Renderer>().enabled = false;
+        leftInitialPosition = leftBar.transform.localPosition;
+        leftInitialScale = leftBar.transform.localScale;
+        Debug.Log(leftInitialPosition);
+        DontDestroyOnLoad(this); animator = GetComponent<Animator>();
     }
 
     void Update()
     {
+        angerBar += Time.deltaTime*angerDropPerSecend;
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
         if (moveHorizontal > 0)
@@ -38,50 +56,111 @@ public class MaloMove : MonoBehaviour
         {
             transform.localScale = new Vector3(1, 1, 1);
         }
+
+        animator.SetBool("walking", moveVertical!=0||moveHorizontal!=0);
+
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
         rb.velocity = movement * speed;
         if (Input.GetKeyUp(KeyCode.Q))
         {
-            if(hold != null)
-            {   hold.SetActive(true);
-                //丢弃物品
-                float x = this.transform.position.x;
-                float y = this.transform.position.y;
-                hold.transform.position = new Vector3(x,y,0);
-                holddata.GetComponent<Renderer>().enabled = false;
+            if (hold != null)
+            {
                 
+                holddata.GetComponent<Renderer>().enabled = false;
+                hold.SendMessage("dropItem");
+                if (nearWindow)
+                {
+                    hold.SendMessage("dropToWindow");
+                    Destroy(hold);
+                }
+                else
+                {
+                    hold.GetComponent<Renderer>().enabled = true;
+                    //丢弃物品
+                    float x = this.transform.position.x;
+                    float y = this.transform.position.y;
+                    hold.transform.position = new Vector3(x, y, 0);
+                    DontDestroyOnLoad(hold) ;
+                }
                 hold = null;
             }
-            else
+            else//拿起物品
             {
-                if (currentItemIndex != -1)
-                {
-                    hold = items[1].gameObject;
-                    Debug.Log(hold.name);
-                    hold.SetActive(false);
-                    //转换到拿起的图片
+                hold = items[currentItems[currentItemIndex]].gameObject;
+                hold.SendMessage("getItem");
+                Debug.Log(hold.name);
+                hold.GetComponent<Renderer>().enabled = false;
+                //转换到拿起的图片
 
-                    Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
-                    
-                    holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(0.5f, 0.5f),500);
+                Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
 
-                    holddata.GetComponent<Renderer>().enabled = true;
-                }
-                //拿起物品
+                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(0.5f, 0.5f), 500);
+
+                holddata.GetComponent<Renderer>().enabled = true;
+            }
+        }
+        if(Input.GetKeyUp(KeyCode.E))
+        {
+            if (hold != null)
+            {
+                hold.SendMessage("useItem");
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.I))
+        {
+            if(currentItems.Count > 0)
+            {
+                unselectItem(currentItemIndex);
+                currentItemIndex = (currentItemIndex + 1) % currentItems.Count;
+                selectItem(currentItemIndex);
             }
         }
         
+        float progress = angerBar / 100f;
+        Debug.Log(progress);
+        leftBar.transform.localScale = new Vector3(leftInitialScale.x, leftInitialScale.y * progress, leftInitialScale.z);
+        float deltaY = (1 - progress) * leftInitialScale.y / 2;
+        leftBar.transform.localPosition = new Vector3(leftInitialPosition.x, leftInitialPosition.y + deltaY, leftInitialPosition.z);
     }
     public void setCurrentItem(int itemType)
     {
-        currentItemIndex = itemType;
-        Debug.Log("MALO碰到了" + itemType);
+        currentItems.Add(itemType);
+        if(currentItems.Count == 0) {
+            selectItem(0);
+        }
     }
-    public void releaseItem()
+    public void releaseItem(int itemType)
     {
-        currentItemIndex = -1;
-        Debug.Log("MALO没有碰到物体");
+        currentItems.Remove(itemType);
+        int t=currentItemIndex;
+        currentItemIndex %= currentItems.Count;
+        if(t!=currentItemIndex)
+        {
+            unselectItem(t);
+            selectItem(currentItemIndex);
+        }
     }
+    public void angerChange(int anger)
+    {
+        angerBar += anger;
+        if (angerBar > 100)
+        {
+            //GameEnd
+        }
+    }
+    private void unselectItem(int index)
+    {
+        items[currentItems[index]].GetComponent<Renderer>().material=tempMaterial;
+    }
+    private void selectItem(int index)
+    {
 
+        Renderer rend = items[currentItems[index]].GetComponent<Renderer>();
 
+        Material newMaterial = new Material(rend.material);
+        // 设置材质的颜色为白色
+        newMaterial.color = Color.white;
+        tempMaterial = rend.material;
+        rend.material = newMaterial;
+    }
 }

@@ -17,7 +17,18 @@ public class itemExample : MonoBehaviour
     {
         if (other == player)
         {
-            player.gameObject.SendMessage("releaseItem");
+            player.gameObject.SendMessage("releaseItem", itemType);
+        }
+    }
+    void userItem()
+    {
+
+    }
+    public void OnTriggerStay2D(Collider2D collision)
+    {
+        if (Input.GetKeyUp(KeyCode.F))
+        {
+            //触发事件的流程
         }
     }
 }
