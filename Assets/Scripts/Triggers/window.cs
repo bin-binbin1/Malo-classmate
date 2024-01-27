@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class window : MonoBehaviour
 {
-    Collider2D player;
-    string nextSceneName;
+    public Collider2D player;
+    public string nextSceneName;
     public void OnTriggerEnter2D(Collider2D other)
     {
 
@@ -26,6 +26,7 @@ public class window : MonoBehaviour
     {
         if(collision==player)
         {
+            Debug.Log(KeyCode.F);
             if (Input.GetKeyUp(KeyCode.F))
             {
                 //player.SendMessage("interact");

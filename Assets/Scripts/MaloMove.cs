@@ -24,6 +24,7 @@ public class MaloMove : MonoBehaviour
     private Animator animator;
     private bool isinteract = false;
     public float interactTime;
+    private Vector3 initialScale;
     void Start()
     {
         
@@ -40,6 +41,7 @@ public class MaloMove : MonoBehaviour
         leftInitialPosition = leftBar.transform.localPosition;
         leftInitialScale = leftBar.transform.localScale;
         DontDestroyOnLoad(this); animator = GetComponent<Animator>();
+        initialScale = transform.localScale;
     }
 
     void Update()
@@ -53,11 +55,12 @@ public class MaloMove : MonoBehaviour
         float moveVertical = Input.GetAxis("Vertical");
         if (moveHorizontal > 0)
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+          
+            transform.localScale = new Vector3(-initialScale.x, initialScale.y, initialScale.z);
         }
         else if (moveHorizontal < 0)
         {
-            transform.localScale = new Vector3(1, 1, 1);
+            transform.localScale =initialScale;
         }
 
         animator.SetBool("walking", moveVertical!=0||moveHorizontal!=0);
@@ -108,7 +111,7 @@ public class MaloMove : MonoBehaviour
 
                 Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
 
-                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(0.5f, 0.5f), 500);
+                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
 
                 holddata.GetComponent<Renderer>().enabled = true;
             }
@@ -132,9 +135,9 @@ public class MaloMove : MonoBehaviour
         
         float progress = angerBar / 100f;
 
-        leftBar.transform.localScale = new Vector3(leftInitialScale.x, leftInitialScale.y * progress, leftInitialScale.z);
-        float deltaY = (1 - progress) * leftInitialScale.y / 2;
-        leftBar.transform.localPosition = new Vector3(leftInitialPosition.x, leftInitialPosition.y + deltaY, leftInitialPosition.z);
+        leftBar.transform.localScale = new Vector3(leftInitialScale.x * progress, leftInitialScale.y, leftInitialScale.z);
+        float deltaX = (1 - progress) * leftInitialScale.x / 2;
+        leftBar.transform.localPosition = new Vector3(leftInitialPosition.x - deltaX, leftInitialPosition.y , leftInitialPosition.z);
     }
     public void setCurrentItem(int itemType)
     {
