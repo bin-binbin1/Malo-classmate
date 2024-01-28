@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class MaloMove : MonoBehaviour
 {
@@ -25,6 +26,11 @@ public class MaloMove : MonoBehaviour
     private bool isinteract = false,taunt=false;
     public float interactTime;
     private Vector3 initialScale;
+
+
+    int isbed = 0;
+    Sprite self;
+    List<Vector2> pointList = new List<Vector2>();
     void Start()
     {
         
@@ -42,6 +48,7 @@ public class MaloMove : MonoBehaviour
         leftInitialScale = leftBar.transform.localScale;
         DontDestroyOnLoad(this); animator = GetComponent<Animator>();
         initialScale = transform.localScale;
+        self= gameObject.GetComponent<SpriteRenderer>().sprite;
     }
 
     void Update()
@@ -51,8 +58,8 @@ public class MaloMove : MonoBehaviour
         {
             angerBar = 0;
         }
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        float moveHorizontal = Input.GetAxis("Horizontal")*isbed;
+        float moveVertical = Input.GetAxis("Vertical")*isbed;
         if (moveHorizontal > 0)
         {
           
@@ -75,6 +82,26 @@ public class MaloMove : MonoBehaviour
             movement= new Vector2(moveHorizontal, moveVertical);
         }
         rb.velocity = movement * speed;
+        if (isbed==0&&Input.GetKeyUp(KeyCode.F))
+        {
+            Vector2 MoveSpeed = (new Vector3(8,0,0) - gameObject.transform.position).normalized * 10;
+            //定义一个列表存放所有的计算的点
+            Debug.Log("movespeed" + MoveSpeed);
+            pointList.Add(gameObject.transform.position);
+            Debug.Log(gameObject.transform.position);
+            for (int i = 1; i < 50; i++)
+            {
+                float time = i * 0.02f * 5;
+                float timePow = time * time;
+                //下一个点
+                Vector2 point = new Vector2(pointList.First().x + MoveSpeed.x * time, pointList.First().y + MoveSpeed.y * time - 0.5f * Physics2D.gravity.magnitude * timePow);
+                pointList.Add(point);//加入到点的列表中
+
+            }
+            
+            StartCoroutine(getup());
+        }
+
         if (Input.GetKeyUp(KeyCode.Q))
         {
             if (hold != null)
@@ -111,7 +138,7 @@ public class MaloMove : MonoBehaviour
 
                 Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
 
-                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(0.5f, 0.5f), 250);
+                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
 
                 holddata.GetComponent<Renderer>().enabled = true;
             }
@@ -221,4 +248,28 @@ public class MaloMove : MonoBehaviour
         yield return new WaitForSeconds(interactTime);
         animator.SetBool("interact", false);
     }
+
+    IEnumerator getup()
+    {
+        int num = 0;
+
+        while (true)
+        {
+            yield return new WaitForSeconds(0.05f);
+            if (isbed==0)
+            { transform.position = pointList[num];
+                num++;
+                animator.SetBool("getup",isbed==0);
+                if (num == 11)
+                {
+                    
+                    isbed = 1;
+                    animator.SetBool("getup", false);
+                    break;
+                }
+            }
+        }
+        
+    }
+
 }
