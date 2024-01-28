@@ -26,16 +26,17 @@ public class window : MonoBehaviour
     {
         if(collision==player)
         {
-            Debug.Log(KeyCode.F);
             if (Input.GetKeyUp(KeyCode.F))
             {
                 //player.SendMessage("interact");
+                Debug.Log("aaa");
                 if (nextSceneName == "end")
                 {
                     Application.Quit();
                 }
                 else
                 {
+                    
                     SceneManager.LoadScene(nextSceneName);
                 }
             }

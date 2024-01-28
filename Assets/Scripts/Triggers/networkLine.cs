@@ -8,12 +8,15 @@ public class networkLine : MonoBehaviour
     private float t=0;
     private bool lights;
     public Vector3 moveLine;
-    public GameObject aixin;
-    public GameObject xinsui;
+    public GameObject net,aixin,suixin;
+    public Sprite lianwang,duanwang;
+    
     // Start is called before the first frame update
     void Start()
     {
-        xinsui.SetActive(false);
+        lights = true;
+        suixin.SetActive(false);
+        lianwang = net.GetComponent<SpriteRenderer>().sprite;
     }
 
     // Update is called once per frame
@@ -21,17 +24,18 @@ public class networkLine : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.F))
         {
-            if(lights)//有网，则断网
+            SpriteRenderer t= net.GetComponent<SpriteRenderer>();
+            if (lights)//有网，则断网
             {
-                xinsui.SetActive(true);
                 aixin.SetActive(false);
-                transform.position += moveLine;
+                suixin.SetActive(true);
+                t.sprite = duanwang;
             }
             else//冒爱心
             {
-                xinsui.SetActive(false);
+                t.sprite=lianwang;
+                suixin.SetActive(false);
                 aixin.SetActive(true);
-                transform.position -= moveLine;
             }
             lights=!lights;
         }

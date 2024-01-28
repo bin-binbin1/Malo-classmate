@@ -40,9 +40,6 @@ public class Book : MonoBehaviour
             player.gameObject.SendMessage("releaseItem", itemType);
         }
     }
-    /// <summary>
-    /// 被拾起
-    /// </summary>
 
     public void getItem()
     {
@@ -51,9 +48,6 @@ public class Book : MonoBehaviour
        cor= StartCoroutine(Addanger());
 
     }
-    /// <summary>
-    /// 使用
-    /// </summary>
 
     public void useItem()
     {
@@ -72,7 +66,7 @@ public class Book : MonoBehaviour
 
     void usebook()
     {
-
+        Debug.Log("using book");
         gameObject.GetComponent<SpriteRenderer>().sprite = pi;
         yihuo.SetActive(false);
         dushu.SetActive(false);

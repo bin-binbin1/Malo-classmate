@@ -14,32 +14,35 @@ public class bathroom : MonoBehaviour
         xizao.SetActive(true);
         yihuo.SetActive(false);
         fennu.SetActive(false);
+        heimu.SetActive(false);
     }
     private int clickTimes = 0;
     private float lastClickTime = 0f;
-    private float clickInterval = 1f;
+    private float clickInterval = 5f;
     private bool shengqi=false;
     private bool lights = true;
-    public GameObject xizao, yihuo, fennu;
+    public GameObject xizao, yihuo, fennu,heimu;
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.F))
         {
-            if (!shengqi)
-            {
+
                 if(lights)
                 {
-
-                    yihuo.SetActive(true) ;
-                    xizao .SetActive(false) ;
+                    if (!shengqi)
+                    {
+                        yihuo.SetActive(true);
+                        xizao.SetActive(false);
+                    }
+                    heimu.SetActive(true) ;
                     player.SendMessage("angerChange", 10);
                     // 获取当前时间
                     float currentTime = Time.time;
 
                     // 检查是否在一秒内
-                    if (currentTime - lastClickTime < clickInterval)
+                    if (currentTime - lastClickTime < clickInterval&&!shengqi)
                     {
-                        shengqi = true;
+                        
                         // 增加点击次数
                         clickTimes++;
 
@@ -47,6 +50,10 @@ public class bathroom : MonoBehaviour
                         if (clickTimes >= 3)
                         {
                             player.SendMessage("angerChange", 20);
+                            Debug.Log("生气");
+                            shengqi = true;
+                            fennu.SetActive(true);
+                        heimu.SetActive(true);yihuo.SetActive(false);xizao.SetActive(false);
                         }
                     }
                     else
@@ -60,12 +67,16 @@ public class bathroom : MonoBehaviour
                 }
                 else
                 {
-                    yihuo.SetActive(false);
-                    xizao.SetActive(true);
+                    if (!shengqi)
+                    {
+                        yihuo.SetActive(false);
+                        xizao.SetActive(true);
+                    }
+                    heimu.SetActive(false);
                 }
-
+                lights = !lights;
             }
-        }
+        
     }
 
     public void OnTriggerEnter2D(Collider2D collision)

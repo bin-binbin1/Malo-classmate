@@ -111,7 +111,7 @@ public class MaloMove : MonoBehaviour
 
                 Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
 
-                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
+                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(0.5f, 0.5f), 250);
 
                 holddata.GetComponent<Renderer>().enabled = true;
             }
