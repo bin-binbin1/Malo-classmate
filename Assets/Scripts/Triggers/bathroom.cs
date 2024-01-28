@@ -41,6 +41,7 @@ public class bathroom : MonoBehaviour
                 off.SetActive(true);
                 on.SetActive(false);
                 player.SendMessage("angerChange", 10);
+                player.SendMessage("interact");
                 // 获取当前时间
                 float currentTime = Time.time;
 

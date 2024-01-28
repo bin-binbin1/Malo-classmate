@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-public class Phone : MonoBehaviour
+using UnityEngine;
+
+public class phone : MonoBehaviour
 {
     public Collider2D player;
     public int itemType = 2;
@@ -55,7 +56,7 @@ public class Phone : MonoBehaviour
 
     public void useItem()
     {
-        
+
     }
 
     public void dropItem()
@@ -65,18 +66,19 @@ public class Phone : MonoBehaviour
         {
             gameObject.GetComponent<SpriteRenderer>().sprite = pi1;
             player.gameObject.SendMessage("angerChange", 30);
-        }else
+        }
+        else
         {
             gameObject.GetComponent<SpriteRenderer>().sprite = pi2;
         }
 
-            Debug.Log("ֹͣ");
+        Debug.Log("ֹͣ");
     }
 
     void usephone()
     {
 
-        
+
 
         Destroy(gameObject.GetComponent<Collider2D>());
     }

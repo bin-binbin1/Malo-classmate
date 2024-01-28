@@ -26,6 +26,7 @@ public class networkLine : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.F))
         {
             SpriteRenderer t= net.GetComponent<SpriteRenderer>();
+            player.SendMessage("interact");
             if (lights)//ÓĞÍø£¬Ôò¶ÏÍø
             {
                 aixin.SetActive(false);

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Security.Cryptography;
 
 public class MaloMove : MonoBehaviour
 {
@@ -26,18 +27,21 @@ public class MaloMove : MonoBehaviour
     private bool isinteract = false,taunt=false;
     public float interactTime;
     private Vector3 initialScale;
-
-
+    public GameObject gameEnd;
+    public GameObject randomAudio;
+    private AudioSource[] audios;
     int isbed = 0;
     Sprite self;
     List<Vector2> pointList = new List<Vector2>();
     Vector2 org;
+
     void Start()
     {
-        
+       
         rb = GetComponent<Rigidbody2D>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         Transform[] t=itemFather.GetComponentsInChildren<Transform>();
+
         for(int i=1; i<t.Length; i++)
         {
             items.Add(t[i]);
@@ -50,6 +54,8 @@ public class MaloMove : MonoBehaviour
         animator = GetComponent<Animator>();
         initialScale = transform.localScale;
         self= gameObject.GetComponent<SpriteRenderer>().sprite;
+        audios = randomAudio.GetComponentsInChildren<AudioSource>();
+       
     }
 
     void Update()
@@ -129,6 +135,7 @@ public class MaloMove : MonoBehaviour
             }
             else//拿起物品
             {
+                Debug.Log("currentItems.Count" + currentItems.Count);
                 if (currentItems.Count > 0)
                 {
                     animator.SetBool("hold", true);
@@ -140,7 +147,7 @@ public class MaloMove : MonoBehaviour
 
                     Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
 
-                    holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
+                    holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(0.5f, 0.5f), 250);
 
                     holddata.GetComponent<Renderer>().enabled = true;
                 }
@@ -150,7 +157,15 @@ public class MaloMove : MonoBehaviour
         {
             if (hold != null)
             {
+                animator.SetBool("hold", false);
+                holddata.GetComponent<Renderer>().enabled = false;
+                //丢弃物品
                 hold.SendMessage("useItem");
+                float x = this.transform.position.x;
+                float y = this.transform.position.y;
+                hold.transform.position = new Vector3(x, y, 0);
+                DontDestroyOnLoad(hold);
+                hold = null;
             }
         }
         if (Input.GetKeyUp(KeyCode.I))
@@ -212,7 +227,7 @@ public class MaloMove : MonoBehaviour
         angerBar += anger;
         if (angerBar >= 100f)
         {
-            //GameEnd
+            gameEnd.SetActive(true);
         }
     }
     private void unselectItem(int index)
@@ -232,11 +247,15 @@ public class MaloMove : MonoBehaviour
     }
     public void interact()
     {
-
-        if(!animator.GetBool("walking")&&!animator.GetBool("interact")){
-            animator.SetBool("interact", true);
-        }
+        audios[Random.Range(0, audios.Length)].Play();
+        //if(!animator.GetBool("walking")&&!animator.GetBool("interact")){
+        //    animator.SetBool("interact", true);
+        //}
         
+    }
+    public void wearGlass()
+    {
+        animator.SetBool("wearG", true);
     }
     public void gotoWindow()
     {
@@ -250,7 +269,6 @@ public class MaloMove : MonoBehaviour
     {
         float dis = (y-transform.position.y ) / 10;
         StartCoroutine("up",dis);
-        Debug.Log("Y"+y);
     }
 
     public void Jumptopodium(object[] obj)
@@ -260,7 +278,6 @@ public class MaloMove : MonoBehaviour
         Vector2 pos = new Vector2(x, y);
         org=transform.position;
         transform.position=pos;
-        Debug.Log(pos);
         Invoke("back", 1);
 
     }
@@ -269,7 +286,6 @@ public class MaloMove : MonoBehaviour
     {
         
         transform.position = org;
-        Debug.Log(org);
     }
 
     IEnumerator interacting()

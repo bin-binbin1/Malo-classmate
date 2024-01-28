@@ -2,9 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
-using UnityEngine;
-using UnityEngine.Video;
-using UnityEngine.SceneManagement;
+
 
 public class VideoPlayerController : MonoBehaviour
 {

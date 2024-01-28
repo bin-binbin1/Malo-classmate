@@ -36,7 +36,7 @@ public class window : MonoBehaviour
                 }
                 else
                 {
-                    
+                    player.SendMessage("interact");
                     SceneManager.LoadScene(nextSceneName);
                 }
             }

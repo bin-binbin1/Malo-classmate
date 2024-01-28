@@ -19,16 +19,18 @@ public class Glass : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log(collision.name+"enter");
         if (collision == player)
         {
-            player.gameObject.SendMessage("setCurrentItem", itemType);
+            player.SendMessage("setCurrentItem", itemType);
         }
     }
     public void OnTriggerExit2D(Collider2D other)
     {
+        Debug.Log(other.name + "leave");
         if (other == player)
         {
-            player.gameObject.SendMessage("releaseItem", itemType);
+            player.SendMessage("releaseItem", itemType);
         }
     }
 
@@ -44,6 +46,7 @@ public class Glass : MonoBehaviour
         //销毁碰撞体
         Destroy(gameObject.GetComponent<Collider2D>());
         gameObject.GetComponent<Renderer>().enabled = false;
+        player.SendMessage("wearGlass");
         //眼镜被带上
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class phone : MonoBehaviour
+public class iPhone : MonoBehaviour
 {
     public Collider2D player;
     public int itemType = 2;
