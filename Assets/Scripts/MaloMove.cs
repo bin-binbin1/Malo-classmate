@@ -27,12 +27,11 @@ public class MaloMove : MonoBehaviour
     public float interactTime;
     private Vector3 initialScale;
 
-    public GameObject gameEnd;
+
     int isbed = 0;
     Sprite self;
     List<Vector2> pointList = new List<Vector2>();
-
-    private static bool origional = true;
+    Vector2 org;
     void Start()
     {
         
@@ -48,8 +47,7 @@ public class MaloMove : MonoBehaviour
         holddata.GetComponent<Renderer>().enabled = false;
         leftInitialPosition = leftBar.transform.localPosition;
         leftInitialScale = leftBar.transform.localScale;
-        //DontDestroyOnLoad(this);
-        animator = GetComponent<Animator>();
+        DontDestroyOnLoad(this); animator = GetComponent<Animator>();
         initialScale = transform.localScale;
         self= gameObject.GetComponent<SpriteRenderer>().sprite;
     }
@@ -109,7 +107,7 @@ public class MaloMove : MonoBehaviour
         {
             if (hold != null)
             {
-
+                
                 holddata.GetComponent<Renderer>().enabled = false;
                 hold.SendMessage("dropItem");
                 if (nearWindow)
@@ -125,27 +123,25 @@ public class MaloMove : MonoBehaviour
                     float x = this.transform.position.x;
                     float y = this.transform.position.y;
                     hold.transform.position = new Vector3(x, y, 0);
-                    DontDestroyOnLoad(hold);
+                    DontDestroyOnLoad(hold) ;
                 }
                 hold = null;
             }
             else//拿起物品
             {
-                if (currentItems.Count > 0)
-                {
-                    hold = items[currentItems[currentItemIndex]].gameObject;
-                    hold.SendMessage("getItem");
-                    Debug.Log(currentItemIndex + hold.name);
-                    hold.GetComponent<Renderer>().enabled = false;
-                    hold.GetComponent<Collider2D>().enabled = false;
-                    //转换到拿起的图片
+                
+                hold = items[currentItems[currentItemIndex]].gameObject;
+                hold.SendMessage("getItem");
+                Debug.Log(currentItemIndex+ hold.name);
+                hold.GetComponent<Renderer>().enabled = false;
+                hold.GetComponent<Collider2D>().enabled = false;
+                //转换到拿起的图片
 
-                    Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
+                Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
 
-                    holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
+                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
 
-                    holddata.GetComponent<Renderer>().enabled = true;
-                }
+                holddata.GetComponent<Renderer>().enabled = true;
             }
         }
         if(Input.GetKeyUp(KeyCode.E))
@@ -214,7 +210,7 @@ public class MaloMove : MonoBehaviour
         angerBar += anger;
         if (angerBar >= 100f)
         {
-            gameEnd.SetActive(true);
+            //GameEnd
         }
     }
     private void unselectItem(int index)
@@ -248,6 +244,32 @@ public class MaloMove : MonoBehaviour
     {
         nearWindow = false;
     }
+    public void JumptoFan(float y)
+    {
+        float dis = (y-transform.position.y ) / 10;
+        StartCoroutine("up",dis);
+        Debug.Log("Y"+y);
+    }
+
+    public void Jumptopodium(object[] obj)
+    {
+        float x = (float)obj[0];
+        float y = (float)obj[1];
+        Vector2 pos = new Vector2(x, y);
+        org=transform.position;
+        transform.position=pos;
+        Debug.Log(pos);
+        Invoke("back", 1);
+
+    }
+
+    void back()
+    {
+        
+        transform.position = org;
+        Debug.Log(org);
+    }
+
     IEnumerator interacting()
     {
         yield return new WaitForSeconds(interactTime);
@@ -276,5 +298,39 @@ public class MaloMove : MonoBehaviour
         }
         
     }
+    IEnumerator up(float dis)
+    {
+        Vector3 pos = transform.position;
+        int num = 0;
+        
+        while (true)
+        {
+            yield return new WaitForSeconds(0.05f);
+            
+            num++;
+            if (num < 11)
+            {
+                pos.y += dis;
+                animator.SetBool("getup", true);
+            }
+            if (num == 11)
+            {
+                animator.SetBool("getup", false);
+            }
+            if (num > 11&&num<30)
+            {
+                Debug.Log("onfan");
+            }else if (num >= 30&&num<40)
+            {
+                pos.y -= dis;
+            }else if (num == 40)
+            {
+                break;
+            }
+            transform.position = pos;
+            Debug.Log("POSY"+transform.position.y);
+        }
+    }
+
 
 }
