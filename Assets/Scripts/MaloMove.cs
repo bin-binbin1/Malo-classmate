@@ -27,7 +27,7 @@ public class MaloMove : MonoBehaviour
     public float interactTime;
     private Vector3 initialScale;
 
-
+    public GameObject gameEnd;
     int isbed = 0;
     Sprite self;
     List<Vector2> pointList = new List<Vector2>();
@@ -106,7 +106,7 @@ public class MaloMove : MonoBehaviour
         {
             if (hold != null)
             {
-                
+
                 holddata.GetComponent<Renderer>().enabled = false;
                 hold.SendMessage("dropItem");
                 if (nearWindow)
@@ -122,25 +122,27 @@ public class MaloMove : MonoBehaviour
                     float x = this.transform.position.x;
                     float y = this.transform.position.y;
                     hold.transform.position = new Vector3(x, y, 0);
-                    DontDestroyOnLoad(hold) ;
+                    DontDestroyOnLoad(hold);
                 }
                 hold = null;
             }
             else//拿起物品
             {
-                
-                hold = items[currentItems[currentItemIndex]].gameObject;
-                hold.SendMessage("getItem");
-                Debug.Log(currentItemIndex+ hold.name);
-                hold.GetComponent<Renderer>().enabled = false;
-                hold.GetComponent<Collider2D>().enabled = false;
-                //转换到拿起的图片
+                if (currentItems.Count > 0)
+                {
+                    hold = items[currentItems[currentItemIndex]].gameObject;
+                    hold.SendMessage("getItem");
+                    Debug.Log(currentItemIndex + hold.name);
+                    hold.GetComponent<Renderer>().enabled = false;
+                    hold.GetComponent<Collider2D>().enabled = false;
+                    //转换到拿起的图片
 
-                Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
+                    Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
 
-                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
+                    holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
 
-                holddata.GetComponent<Renderer>().enabled = true;
+                    holddata.GetComponent<Renderer>().enabled = true;
+                }
             }
         }
         if(Input.GetKeyUp(KeyCode.E))
@@ -209,7 +211,7 @@ public class MaloMove : MonoBehaviour
         angerBar += anger;
         if (angerBar >= 100f)
         {
-            //GameEnd
+            gameEnd.SetActive(true);
         }
     }
     private void unselectItem(int index)
