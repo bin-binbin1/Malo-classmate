@@ -17,7 +17,16 @@ public class ChangeScene : MonoBehaviour
     }
     public void Click()
     {
-        StartCoroutine(changeCoroutine());
+        if (nextSceneName!="ending")
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
+        else
+        {
+            Application.Quit();
+        }
+        
+        //StartCoroutine(changeCoroutine());
     }
 
     public IEnumerator changeCoroutine()

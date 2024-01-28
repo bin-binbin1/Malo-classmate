@@ -14,6 +14,7 @@ public class networkLine : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        enabled = false;
         lights = true;
         suixin.SetActive(false);
         lianwang = net.GetComponent<SpriteRenderer>().sprite;

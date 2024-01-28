@@ -31,6 +31,8 @@ public class MaloMove : MonoBehaviour
     int isbed = 0;
     Sprite self;
     List<Vector2> pointList = new List<Vector2>();
+
+    private static bool origional = true;
     void Start()
     {
         
@@ -46,7 +48,8 @@ public class MaloMove : MonoBehaviour
         holddata.GetComponent<Renderer>().enabled = false;
         leftInitialPosition = leftBar.transform.localPosition;
         leftInitialScale = leftBar.transform.localScale;
-        DontDestroyOnLoad(this); animator = GetComponent<Animator>();
+        //DontDestroyOnLoad(this);
+        animator = GetComponent<Animator>();
         initialScale = transform.localScale;
         self= gameObject.GetComponent<SpriteRenderer>().sprite;
     }

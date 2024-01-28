@@ -5,14 +5,17 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/testSample.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
     path: Assets/Scenes/start.unity
     guid: 42a17b3cbddb0094f8d92c4941f94915
   - enabled: 1
-    path: Assets/Scenes/Dormitory.unity
+    path: Assets/Scenes/OpenEye.unity
+    guid: 2ba34391d9576c448afc73e5e2c802c8
+  - enabled: 1
+    path: Assets/Scenes/dormitory.unity
     guid: bba71ccc6a38a0c4a8cbbfbb20414c43
   - enabled: 1
     path: Assets/Scenes/Classroom.unity
