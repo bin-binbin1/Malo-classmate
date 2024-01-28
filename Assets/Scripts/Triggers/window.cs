@@ -8,6 +8,7 @@ public class window : MonoBehaviour
     public Collider2D player;
     public string nextSceneName;
     private bool toNextScene=false;
+    public AudioSource audioSource;
     public void OnTriggerEnter2D(Collider2D other)
     {
 
@@ -36,6 +37,7 @@ public class window : MonoBehaviour
                 }
                 else
                 {
+                    Destroy(audioSource);
                     player.SendMessage("interact");
                     SceneManager.LoadScene(nextSceneName);
                 }
