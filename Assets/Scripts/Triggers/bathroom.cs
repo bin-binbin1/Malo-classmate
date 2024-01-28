@@ -7,6 +7,7 @@ public class bathroom : MonoBehaviour
 {
 
     public Collider2D player;
+    private AudioSource audioS;
     private void Start()
     {
         enabled = false;
@@ -15,67 +16,73 @@ public class bathroom : MonoBehaviour
         yihuo.SetActive(false);
         fennu.SetActive(false);
         heimu.SetActive(false);
+        off.SetActive(false);
+        audioS=GetComponent<AudioSource>();
     }
     private int clickTimes = 0;
     private float lastClickTime = 0f;
     private float clickInterval = 5f;
     private bool shengqi=false;
     private bool lights = true;
-    public GameObject xizao, yihuo, fennu,heimu;
+    public GameObject xizao, yihuo, fennu,heimu,on,off;
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.F))
         {
-
-                if(lights)
+            audioS.Play();
+            if (lights)
+            {
+                if (!shengqi)
                 {
-                    if (!shengqi)
-                    {
-                        yihuo.SetActive(true);
-                        xizao.SetActive(false);
-                    }
-                    heimu.SetActive(true) ;
-                    player.SendMessage("angerChange", 10);
-                    // 获取当前时间
-                    float currentTime = Time.time;
+                    yihuo.SetActive(true);
+                    xizao.SetActive(false);
+                }
+                heimu.SetActive(true);
+                off.SetActive(true);
+                on.SetActive(false);
+                player.SendMessage("angerChange", 10);
+                // 获取当前时间
+                float currentTime = Time.time;
 
-                    // 检查是否在一秒内
-                    if (currentTime - lastClickTime < clickInterval&&!shengqi)
-                    {
-                        
-                        // 增加点击次数
-                        clickTimes++;
+                // 检查是否在一秒内
+                if (currentTime - lastClickTime < clickInterval && !shengqi)
+                {
 
-                        // 检查是否达到三次或更多
-                        if (clickTimes >= 3)
-                        {
-                            player.SendMessage("angerChange", 20);
-                            Debug.Log("生气");
-                            shengqi = true;
-                            fennu.SetActive(true);
-                        heimu.SetActive(true);yihuo.SetActive(false);xizao.SetActive(false);
-                        }
-                    }
-                    else
-                    {
-                        // 如果超过一秒，重置点击次数
-                        clickTimes = 1;
-                    }
+                    // 增加点击次数
+                    clickTimes++;
 
-                    // 更新上一次点击的时间
-                    lastClickTime = currentTime;
+                    // 检查是否达到三次或更多
+                    if (clickTimes >= 3)
+                    {
+                        player.SendMessage("angerChange", 20);
+                        Debug.Log("生气");
+                        shengqi = true;
+                        fennu.SetActive(true);
+                        heimu.SetActive(true); yihuo.SetActive(false); xizao.SetActive(false);
+                    }
                 }
                 else
                 {
-                    if (!shengqi)
-                    {
-                        yihuo.SetActive(false);
-                        xizao.SetActive(true);
-                    }
-                    heimu.SetActive(false);
+                    // 如果超过一秒，重置点击次数
+                    clickTimes = 1;
                 }
-                lights = !lights;
+
+                // 更新上一次点击的时间
+                lastClickTime = currentTime;
             }
+            else
+            {
+                if (!shengqi)
+                {
+                    yihuo.SetActive(false);
+                    xizao.SetActive(true);
+                }
+                off.SetActive(false);
+                on.SetActive(true);
+                heimu.SetActive(false);
+            }
+            lights = !lights;
+        }
         
     }
 
