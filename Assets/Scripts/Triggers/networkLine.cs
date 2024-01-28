@@ -7,10 +7,13 @@ public class networkLine : MonoBehaviour
     public Collider2D player;
     private float t=0;
     private bool lights;
+    public Vector3 moveLine;
+    public GameObject aixin;
+    public GameObject xinsui;
     // Start is called before the first frame update
     void Start()
     {
-        
+        xinsui.SetActive(false);
     }
 
     // Update is called once per frame
@@ -20,11 +23,15 @@ public class networkLine : MonoBehaviour
         {
             if(lights)//ÓÐÍø£¬Ôò¶ÏÍø
             {
-
+                xinsui.SetActive(true);
+                aixin.SetActive(false);
+                transform.position += moveLine;
             }
             else//Ã°°®ÐÄ
             {
-
+                xinsui.SetActive(false);
+                aixin.SetActive(true);
+                transform.position -= moveLine;
             }
             lights=!lights;
         }

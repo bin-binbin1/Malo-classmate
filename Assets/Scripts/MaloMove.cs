@@ -22,7 +22,7 @@ public class MaloMove : MonoBehaviour
     private Vector3 leftInitialPosition;
     private Vector3 leftInitialScale;
     private Animator animator;
-    private bool isinteract = false;
+    private bool isinteract = false,taunt=false;
     public float interactTime;
     private Vector3 initialScale;
     void Start()
@@ -130,6 +130,21 @@ public class MaloMove : MonoBehaviour
                 unselectItem(currentItemIndex);
                 currentItemIndex = (currentItemIndex + 1) % currentItems.Count;
                 selectItem(currentItemIndex);
+            }
+        }
+        if(Input.GetKey(KeyCode.J)) {
+            if (!taunt)
+            {
+                taunt = true;
+                animator.SetBool("taunt", true);
+            }
+        }
+        else
+        {
+            if(taunt)
+            {
+                taunt = false;
+                animator.SetBool("taunt", false);
             }
         }
         

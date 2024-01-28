@@ -15,9 +15,12 @@ public class Book : MonoBehaviour
     List<Vector2> pointList = new List<Vector2>();
     bool isdrop = false;
     int num = 0;
+    public GameObject yihuo,dushu;
+    public GameObject study_poeple, wushu_people;
     private void Start()
     {
-
+        yihuo.SetActive(false);
+        wushu_people.SetActive(false);
     }
     private void Update()
     {
@@ -43,7 +46,8 @@ public class Book : MonoBehaviour
 
     public void getItem()
     {
-
+        yihuo.SetActive(true);
+        dushu.SetActive(false);
        cor= StartCoroutine(Addanger());
 
     }
@@ -60,6 +64,8 @@ public class Book : MonoBehaviour
 
     public void dropItem()
     {
+        yihuo.SetActive(false);
+        dushu.SetActive(true);
         StopCoroutine(cor);
         Debug.Log("ֹͣ");
     }
@@ -68,8 +74,13 @@ public class Book : MonoBehaviour
     {
 
         gameObject.GetComponent<SpriteRenderer>().sprite = pi;
-
-        Destroy(gameObject.GetComponent<Collider2D>());
+        yihuo.SetActive(false);
+        dushu.SetActive(false);
+        wushu_people.SetActive(true);
+        study_poeple.SetActive(false) ;
+        //Destroy(gameObject.GetComponent<Collider2D>());
+        enabled = false;
+        GetComponent<Collider2D>().enabled = false;
     }
 
     IEnumerator Addanger()
