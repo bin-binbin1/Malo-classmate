@@ -47,7 +47,7 @@ public class MaloMove : MonoBehaviour
         holddata.GetComponent<Renderer>().enabled = false;
         leftInitialPosition = leftBar.transform.localPosition;
         leftInitialScale = leftBar.transform.localScale;
-        DontDestroyOnLoad(this); animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         initialScale = transform.localScale;
         self= gameObject.GetComponent<SpriteRenderer>().sprite;
     }
@@ -107,7 +107,7 @@ public class MaloMove : MonoBehaviour
         {
             if (hold != null)
             {
-                
+                animator.SetBool("hold", false);
                 holddata.GetComponent<Renderer>().enabled = false;
                 hold.SendMessage("dropItem");
                 if (nearWindow)
@@ -123,25 +123,27 @@ public class MaloMove : MonoBehaviour
                     float x = this.transform.position.x;
                     float y = this.transform.position.y;
                     hold.transform.position = new Vector3(x, y, 0);
-                    DontDestroyOnLoad(hold) ;
+                    DontDestroyOnLoad(hold);
                 }
                 hold = null;
             }
             else//拿起物品
             {
-                
-                hold = items[currentItems[currentItemIndex]].gameObject;
-                hold.SendMessage("getItem");
-                Debug.Log(currentItemIndex+ hold.name);
-                hold.GetComponent<Renderer>().enabled = false;
-                hold.GetComponent<Collider2D>().enabled = false;
-                //转换到拿起的图片
+                if (currentItems.Count > 0)
+                {
+                    animator.SetBool("hold", true);
+                    hold = items[currentItems[currentItemIndex]].gameObject;
+                    hold.SendMessage("getItem");
+                    hold.GetComponent<Renderer>().enabled = false;
+                    hold.GetComponent<Collider2D>().enabled = false;
+                    //转换到拿起的图片
 
-                Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
+                    Texture2D tt = hold.GetComponent<SpriteRenderer>().sprite.texture;
 
-                holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
+                    holddata.GetComponent<SpriteRenderer>().sprite = Sprite.Create(tt, hold.GetComponent<SpriteRenderer>().sprite.textureRect, new Vector2(1f, 1f), 500);
 
-                holddata.GetComponent<Renderer>().enabled = true;
+                    holddata.GetComponent<Renderer>().enabled = true;
+                }
             }
         }
         if(Input.GetKeyUp(KeyCode.E))

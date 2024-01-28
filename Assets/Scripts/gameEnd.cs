@@ -8,16 +8,15 @@ public class gameEnd : MonoBehaviour
 {
     private Image[] childs;
     public float fadeDuration;
+    public AudioSource audioS;
     private void Start()
     {
-
         gameObject.SetActive(false);
     }
     public void OnEnable()
     {
-
+        Destroy(audioS);
         childs = GetComponentsInChildren<Image>();
-        Debug.Log("ÊýÁ¿£º" + childs.Length);
         foreach (var child in childs)
         {
             Color c= child.color;

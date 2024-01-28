@@ -7,6 +7,7 @@ public class window : MonoBehaviour
 {
     public Collider2D player;
     public string nextSceneName;
+    private bool toNextScene=false;
     public void OnTriggerEnter2D(Collider2D other)
     {
 
@@ -17,7 +18,7 @@ public class window : MonoBehaviour
     }
     public void OnTriggerExit2D(Collider2D collision)
     {
-        if(player==collision)
+        if(player==collision&&!toNextScene)
         {
             player.SendMessage("leaveWindow");
         }
@@ -28,8 +29,7 @@ public class window : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.F))
             {
-                //player.SendMessage("interact");
-                Debug.Log("aaa");
+                toNextScene = true;
                 if (nextSceneName == "end")
                 {
                     Application.Quit();
